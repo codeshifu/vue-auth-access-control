@@ -3,8 +3,10 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import './db/';
+import VueSwal from 'vue-swal';
 
 Vue.config.productionTip = false;
+Vue.use(VueSwal);
 
 new Vue({
   router,
