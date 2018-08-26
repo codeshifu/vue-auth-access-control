@@ -3,6 +3,25 @@ import { randomBytes } from 'crypto';
 import user from '../db/user';
 import { errorResponse, successResponse } from '../db/helpers';
 
+export const login = ({ email, password }, cb) => {
+  user.get(email, response => {
+    const userData = response.data;
+    if (!userData)
+      return cb(
+        errorResponse({ message: 'invalid email/password combination.' })
+      );
+
+    bcrypt.compare(password, userData.password).then(passwordMatch => {
+      if (!passwordMatch)
+        return cb(
+          errorResponse({ message: 'invalid email/password combination.' })
+        );
+
+      return cb(successResponse(response.data));
+    });
+  });
+};
+
 export const register = (data = {}, cb) => {
   const { password, email, name = '' } = data;
 
