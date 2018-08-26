@@ -14,9 +14,9 @@ const { GET, PUT, GET_ALL } = actions;
 const defaultCallback = data => console.log(data);
 
 export default {
-  get(id, callback = defaultCallback) {
+  get(email, callback = defaultCallback) {
     dbPromise
-      .then(db => transaction.start(db, null, GET, id))
+      .then(db => transaction.start(db, null, GET, email))
       .then(user => callback(successResponse(user)))
       .catch(err => callback(errorResponse(err)));
   },
