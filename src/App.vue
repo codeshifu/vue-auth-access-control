@@ -5,7 +5,8 @@
       <router-link to="/about">About</router-link> |
       <template v-if="user">
         <router-link to="/secure">Secure</router-link> |
-        <span>{{ user }}</span>
+        <span>{{ user }}</span> |
+        <a @click="logout">Logout</a>
       </template>
       <template v-if="!user">
         <router-link to="/login">Login</router-link> |
@@ -31,6 +32,11 @@
 #nav a {
   font-weight: bold;
   color: #2c3e50;
+  cursor: pointer;
+}
+
+#nav a:hover {
+  text-decoration: underline;
 }
 
 #nav a.router-link-exact-active {
@@ -39,11 +45,12 @@
 </style>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 export default {
   mounted() {
     this.$store.dispatch('refreshUser');
   },
-  computed: mapGetters(['user'])
+  computed: mapGetters(['user']),
+  methods: mapActions(['logout'])
 };
 </script>

@@ -14,6 +14,9 @@ export default new Vuex.Store({
   mutations: {
     LOGIN(state, payload) {
       state.user = payload.email;
+    },
+    LOGOUT(state) {
+      state.user = null;
     }
   },
   actions: {
@@ -27,6 +30,10 @@ export default new Vuex.Store({
           })
           .catch(err => reject(err));
       });
+    },
+    logout({ commit }) {
+      window.localStorage.removeItem('token');
+      commit('LOGOUT');
     },
     refreshUser({ commit }) {
       const token = window.localStorage.getItem('token');
