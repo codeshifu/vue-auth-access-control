@@ -4,27 +4,38 @@ import user from '../db/user';
 import { errorResponse, successResponse } from '../db/helpers';
 import jwt from 'jwt-simple';
 
-const generateToken = user => {
+export const generateToken = user => {
   const timeIssued = new Date().getTime();
   return jwt.encode({ sub: user.email, iat: timeIssued }, 'thisIsAsecreTKeY');
 };
 
+export const generateRandomId = () => randomBytes(6).toString('hex');
+
+export const hashPassword = password => {
+  return bcrypt.genSalt(5).then(salt => {
+    return bcrypt.hash(password, salt).then(hash => hash);
+  });
+};
+
+export const comparePassword = (rawPassword, hash) => {
+  return bcrypt.compare(rawPassword, hash);
+};
+
 export const login = ({ email, password }, cb) => {
   user.get(email, response => {
-    const userData = response.data;
-    if (!userData)
+    const { email: userEmail, password: userPassword } = response.data;
+    if (!userEmail || !userPassword)
       return cb(
         errorResponse({ message: 'invalid email/password combination.' })
       );
 
-    bcrypt.compare(password, userData.password).then(passwordMatch => {
+    comparePassword(password, userPassword).then(passwordMatch => {
       if (!passwordMatch)
         return cb(
           errorResponse({ message: 'invalid email/password combination.' })
         );
 
-      const { email } = response.data;
-      const token = generateToken({ email });
+      const token = generateToken({ email: userEmail });
 
       return cb(successResponse({ token }));
     });
@@ -38,14 +49,12 @@ export const register = (data = {}, cb) => {
     if (response.status === 200 && response.data)
       return cb(errorResponse({ message: 'user already exists' }));
 
-    data.id = randomBytes(6).toString('hex');
+    data.id = generateRandomId();
 
-    bcrypt.genSalt(5).then(salt => {
-      bcrypt.hash(password, salt, (err, hash) => {
-        user.set({ ...data, password: hash }, res =>
-          cb(successResponse(res.data))
-        );
-      });
+    hashPassword(password).then(hash => {
+      user.set({ ...data, password: hash }, result =>
+        cb(successResponse(result.data))
+      );
     });
   });
 };
