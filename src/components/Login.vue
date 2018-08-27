@@ -22,6 +22,20 @@ export default {
       email: '',
       password: ''
     };
+  },
+  methods: {
+    login() {
+      const payload = { ...this.$data };
+      this.$store
+        .dispatch('login', payload)
+        .then(res => {
+          this.$swal('Great!', 'You are logged in.', 'success');
+          this.$router.push('/');
+        })
+        .catch(err => {
+          this.$swal('Oh no!', err.message, 'error');
+        });
+    }
   }
 };
 </script>
