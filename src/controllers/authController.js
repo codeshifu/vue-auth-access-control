@@ -2,6 +2,12 @@ import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import user from '../db/user';
 import { errorResponse, successResponse } from '../db/helpers';
+import jwt from 'jwt-simple';
+
+const generateToken = user => {
+  const timeIssued = new Date().getTime();
+  return jwt.encode({ sub: user.email, iat: timeIssued }, 'thisIsAsecreTKeY');
+};
 
 export const login = ({ email, password }, cb) => {
   user.get(email, response => {
@@ -17,7 +23,10 @@ export const login = ({ email, password }, cb) => {
           errorResponse({ message: 'invalid email/password combination.' })
         );
 
-      return cb(successResponse(response.data));
+      const { email } = response.data;
+      const token = generateToken({ email });
+
+      return cb(successResponse({ token }));
     });
   });
 };
