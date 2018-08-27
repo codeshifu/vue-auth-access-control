@@ -37,7 +37,7 @@ export default new Router({
       component: Secure,
       beforeEnter: (to, from, next) => {
         const token = window.localStorage.getItem('token');
-        if (!token) return next(false);
+        if (!token) return next('/login');
 
         currentUser(token).then(user => {
           if (user) return next();
