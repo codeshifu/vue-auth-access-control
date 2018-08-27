@@ -5,8 +5,8 @@ import store from './store';
 import './db/';
 import VueSwal from 'vue-swal';
 
-Vue.config.productionTip = false;
 Vue.use(VueSwal);
+Vue.config.productionTip = false;
 
 new Vue({
   router,
