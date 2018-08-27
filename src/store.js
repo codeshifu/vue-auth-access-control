@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { register, login } from './controllers/authController';
+import { register, login, currentUser } from './controllers/authController';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: null
+    user: null,
+    token: window.localStorage.getItem('token') || ''
   },
   getters: {
     user: state => state.user
@@ -26,6 +27,11 @@ export default new Vuex.Store({
             resolve(data);
           })
           .catch(err => reject(err));
+      });
+    },
+    refreshUser({ commit, state }) {
+      currentUser(state.token).then(user => {
+        if (user) commit('LOGIN', user);
       });
     }
   }
