@@ -3,8 +3,14 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/register">Register</router-link>
+      <template v-if="user">
+        <router-link to="/secure">Secure</router-link> |
+        <span>{{ user }}</span>
+      </template>
+      <template v-if="!user">
+        <router-link to="/login">Login</router-link> |
+        <router-link to="/register">Register</router-link>
+      </template>
     </div>
     <router-view/>
   </div>
@@ -31,3 +37,10 @@
   color: #42b983;
 }
 </style>
+
+<script>
+import { mapGetters } from 'vuex';
+export default {
+  computed: mapGetters(['user'])
+};
+</script>
