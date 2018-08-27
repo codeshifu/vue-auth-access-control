@@ -3,9 +3,20 @@ import { randomBytes } from 'crypto';
 import User from '../db/user';
 import jwt from 'jwt-simple';
 
+const jwtSecret = 'thisIsAsecreTKeY';
+
 export const generateToken = user => {
   const timeIssued = new Date().getTime();
-  return jwt.encode({ sub: user.email, iat: timeIssued }, 'thisIsAsecreTKeY');
+  return jwt.encode({ email: user.email }, jwtSecret);
+};
+
+export const decodeToken = token => {
+  return jwt.decode(token, jwtSecret);
+};
+
+export const currentUser = token => {
+  const { email } = decodeToken(token) || {};
+  return User.findByEmail(email).then(user => user || null);
 };
 
 export const generateRandomId = () => randomBytes(6).toString('hex');
@@ -34,7 +45,7 @@ export const login = ({ email, password }) =>
         if (!passwordMatch) return reject(loginErrorMessage);
 
         const token = generateToken({ email: userEmail });
-        return resolve({ token });
+        return resolve({ email, token });
       });
     });
   });
