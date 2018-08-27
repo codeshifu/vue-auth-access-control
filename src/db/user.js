@@ -1,10 +1,5 @@
 import dbPromise from './index';
-import {
-  transaction,
-  actions,
-  successResponse,
-  errorResponse
-} from './helpers';
+import { transaction, actions } from './helpers';
 
 export const USER_STORE = 'users';
 
@@ -20,15 +15,15 @@ class User {
   static findByEmail(email) {
     return dbPromise
       .then(db => transaction.start(db, null, GET, email))
-      .then(user => successResponse(user))
+      .then(user => user)
       .catch(err => err);
   }
 
   static find() {
     return dbPromise
       .then(db => transaction.start(db, null, GET_ALL))
-      .then(users => successResponse(users))
-      .catch(err => errorResponse(err));
+      .then(users => users)
+      .catch(err => err);
   }
 
   static create(data) {
@@ -43,7 +38,6 @@ class User {
 const addToDb = data =>
   dbPromise
     .then(db => transaction.start(db, 'readwrite', PUT, data).complete)
-    .then(() => successResponse())
-    .catch(err => errorResponse(err));
+    .catch(err => err);
 
 export default User;

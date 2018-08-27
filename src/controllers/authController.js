@@ -16,7 +16,9 @@ export const decodeToken = token => {
 
 export const currentUser = token => {
   const { email } = decodeToken(token) || {};
-  return User.findByEmail(email).then(user => user || null);
+  return User.findByEmail(email).then(
+    user => (user ? { email: user.email } : null)
+  );
 };
 
 export const generateRandomId = () => randomBytes(6).toString('hex');
@@ -37,8 +39,8 @@ export const login = ({ email, password }) =>
       message: 'Invalid email/password combination.'
     };
 
-    User.findByEmail(email).then(response => {
-      const { email: userEmail, password: userPassword } = response.data || {};
+    User.findByEmail(email).then(user => {
+      const { email: userEmail, password: userPassword } = user || {};
       if (!userEmail || !userPassword) return reject(loginErrorMessage);
 
       comparePassword(password, userPassword).then(passwordMatch => {
@@ -54,8 +56,8 @@ export const register = data =>
   new Promise((resolve, reject) => {
     const { password, email, name = '' } = data;
 
-    User.findByEmail(email).then(response => {
-      if (response.data) return reject({ message: 'user already exists' });
+    User.findByEmail(email).then(user => {
+      if (user) return reject({ message: 'user already exists' });
 
       hashPassword(password).then(hash => {
         const newUser = Object.assign(data, {

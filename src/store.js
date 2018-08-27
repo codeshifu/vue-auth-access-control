@@ -6,8 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: null,
-    token: window.localStorage.getItem('token') || ''
+    user: null
   },
   getters: {
     user: state => state.user
@@ -29,8 +28,11 @@ export default new Vuex.Store({
           .catch(err => reject(err));
       });
     },
-    refreshUser({ commit, state }) {
-      currentUser(state.token).then(user => {
+    refreshUser({ commit }) {
+      const token = window.localStorage.getItem('token');
+      if (!token) return;
+
+      currentUser(token).then(user => {
         if (user) commit('LOGIN', user);
       });
     }
