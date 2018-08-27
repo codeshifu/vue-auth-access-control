@@ -9,9 +9,7 @@ export default new Vuex.Store({
     user: null
   },
   getters: {
-    isLoggedIn: state => {
-      return state.user;
-    }
+    user: state => state.user
   },
   mutations: {
     LOGIN(state, payload) {
