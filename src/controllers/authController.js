@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import user from '../db/user';
-import { errorResponse, successResponse } from '../db/helpers';
 import jwt from 'jwt-simple';
 
 export const generateToken = user => {
@@ -21,40 +20,39 @@ export const comparePassword = (rawPassword, hash) => {
   return bcrypt.compare(rawPassword, hash);
 };
 
-export const login = ({ email, password }, cb) => {
-  user.get(email, response => {
-    const { email: userEmail, password: userPassword } = response.data;
-    if (!userEmail || !userPassword)
-      return cb(
-        errorResponse({ message: 'invalid email/password combination.' })
-      );
+export const login = ({ email, password }) =>
+  new Promise((resolve, reject) => {
+    const loginErrorMessage = {
+      message: 'Invalid email/password combination.'
+    };
 
-    comparePassword(password, userPassword).then(passwordMatch => {
-      if (!passwordMatch)
-        return cb(
-          errorResponse({ message: 'invalid email/password combination.' })
-        );
+    user.get(email).then(response => {
+      const { email: userEmail, password: userPassword } = response.data || {};
+      if (!userEmail || !userPassword) return reject(loginErrorMessage);
 
-      const token = generateToken({ email: userEmail });
+      comparePassword(password, userPassword).then(passwordMatch => {
+        if (!passwordMatch) return reject(loginErrorMessage);
 
-      return cb(successResponse({ token }));
+        const token = generateToken({ email: userEmail });
+        return resolve({ token });
+      });
     });
   });
-};
 
-export const register = (data = {}, cb) => {
-  const { password, email, name = '' } = data;
+export const register = data =>
+  new Promise((resolve, reject) => {
+    const { password, email, name = '' } = data;
 
-  user.get(email, response => {
-    if (response.status === 200 && response.data)
-      return cb(errorResponse({ message: 'user already exists' }));
+    user.get(email).then(response => {
+      if (response.data) return reject({ message: 'user already exists' });
 
-    data.id = generateRandomId();
+      hashPassword(password).then(hash => {
+        const newUser = Object.assign(data, {
+          id: generateRandomId(),
+          password: hash
+        });
 
-    hashPassword(password).then(hash => {
-      user.set({ ...data, password: hash }, result =>
-        cb(successResponse(result.data))
-      );
+        user.set(newUser, result => resolve(null));
+      });
     });
   });
-};

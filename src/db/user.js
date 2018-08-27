@@ -11,25 +11,24 @@ export const USER_STORE = 'users';
 transaction.storeName = USER_STORE;
 
 const { GET, PUT, GET_ALL } = actions;
-const defaultCallback = data => console.log(data);
 
 export default {
-  get(email, callback = defaultCallback) {
-    dbPromise
+  get(email) {
+    return dbPromise
       .then(db => transaction.start(db, null, GET, email))
-      .then(user => callback(successResponse(user)))
-      .catch(err => callback(errorResponse(err)));
+      .then(user => successResponse(user))
+      .catch(err => err);
   },
-  getAll(callback = defaultCallback) {
-    dbPromise
+  getAll() {
+    return dbPromise
       .then(db => transaction.start(db, null, GET_ALL))
-      .then(users => callback(successResponse(users)))
-      .catch(err => callback(errorResponse(err)));
+      .then(users => successResponse(users))
+      .catch(err => errorResponse(err));
   },
-  set(data, callback = defaultCallback) {
-    dbPromise
+  set(data) {
+    return dbPromise
       .then(db => transaction.start(db, 'readwrite', PUT, data).complete)
-      .then(() => callback(successResponse()))
+      .then(() => successResponse())
       .catch(err => errorResponse(err));
   }
 };
