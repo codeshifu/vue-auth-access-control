@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
-import user from '../db/user';
+import User from '../db/user';
 import jwt from 'jwt-simple';
 
 export const generateToken = user => {
@@ -26,7 +26,7 @@ export const login = ({ email, password }) =>
       message: 'Invalid email/password combination.'
     };
 
-    user.get(email).then(response => {
+    User.findByEmail(email).then(response => {
       const { email: userEmail, password: userPassword } = response.data || {};
       if (!userEmail || !userPassword) return reject(loginErrorMessage);
 
@@ -43,7 +43,7 @@ export const register = data =>
   new Promise((resolve, reject) => {
     const { password, email, name = '' } = data;
 
-    user.get(email).then(response => {
+    User.findByEmail(email).then(response => {
       if (response.data) return reject({ message: 'user already exists' });
 
       hashPassword(password).then(hash => {
@@ -52,7 +52,7 @@ export const register = data =>
           password: hash
         });
 
-        user.set(newUser, result => resolve(null));
+        User.create(newUser);
       });
     });
   });
