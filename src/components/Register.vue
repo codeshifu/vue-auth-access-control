@@ -17,14 +17,41 @@
                 <input id="password" type="password" v-model="password" required>
             </div>
 
-            <label for="password-confirm">Confirm Password</label>
-            <div>
-                <input id="password-confirm" type="password" v-model="password_confirmation" required>
-            </div>
-
             <div>
                 <button type="submit">Register</button>
             </div>
         </form>
     </div>
 </template>
+
+<script>
+import { mapActions } from 'vuex';
+
+export default {
+  data() {
+    return {
+      name: '',
+      email: '',
+      password: ''
+    };
+  },
+  methods: {
+    register() {
+      const payload = { ...this.$data };
+      this.$store
+        .dispatch('register', payload)
+        .then(() => {
+          this.$swal(
+            'Awesome 🎉',
+            'Your account has been created successfully.',
+            'success'
+          );
+          this.$router.push('/login');
+        })
+        .catch(err => {
+          this.$swal('😞', err.message, 'error');
+        });
+    }
+  }
+};
+</script>
