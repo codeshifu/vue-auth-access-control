@@ -31,6 +31,13 @@ export default new Vuex.Store({
           .catch(err => reject(err));
       });
     },
+    register({ commit }, payload) {
+      return new Promise((resolve, reject) =>
+        register(payload)
+          .then(() => resolve())
+          .catch(err => reject(err))
+      );
+    },
     logout({ commit }) {
       window.localStorage.removeItem('token');
       commit('LOGOUT');
