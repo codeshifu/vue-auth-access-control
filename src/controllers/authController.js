@@ -57,7 +57,7 @@ export const register = data =>
     const { password, email, name = '' } = data;
 
     User.findByEmail(email).then(user => {
-      if (user) return reject({ message: 'user already exists' });
+      if (user) return reject({ message: 'Email is already registered.' });
 
       hashPassword(password).then(hash => {
         const newUser = Object.assign(data, {
