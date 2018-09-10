@@ -51,7 +51,10 @@ export default {
   mounted() {
     this.$store.dispatch('refreshUser');
   },
-  computed: mapGetters(['user']),
-  methods: mapActions(['logout'])
+  methods: {
+    logout () {
+      this.$store.dispatch('logout', {router: this.$router});
+    }
+  }
 };
 </script>
