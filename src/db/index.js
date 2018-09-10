@@ -4,8 +4,8 @@ const DB_VERSION = 1;
 
 const dbPromise = idb.open('blog', DB_VERSION, upgradeDB => {
   switch (upgradeDB.oldVersion) {
-    case 0:
-      upgradeDB.createObjectStore(USER_STORE, { keyPath: 'email' });
+  case 0:
+    upgradeDB.createObjectStore(USER_STORE, { keyPath: 'email' });
   }
 });
 
