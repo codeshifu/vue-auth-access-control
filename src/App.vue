@@ -47,6 +47,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 export default {
+  computed: mapGetters(['user']),
   mounted() {
     this.$store.dispatch('refreshUser');
   },
