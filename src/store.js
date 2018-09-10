@@ -38,9 +38,10 @@ export default new Vuex.Store({
           .catch(err => reject(err))
       );
     },
-    logout({ commit }) {
+    logout({ commit }, { router }) {
       window.localStorage.removeItem('token');
       commit('LOGOUT');
+      router && router.push ? router.push('/login') : null;
     },
     refreshUser({ commit }) {
       const token = window.localStorage.getItem('token');
