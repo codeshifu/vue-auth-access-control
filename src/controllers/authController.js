@@ -65,7 +65,7 @@ export const register = data =>
           password: hash
         });
 
-        User.create(newUser);
+        User.create(newUser).then(() => resolve());
       });
     });
   });
