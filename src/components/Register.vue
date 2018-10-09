@@ -1,25 +1,27 @@
 <template>
   <div>
-    <h4>Register</h4>
     <form @submit.prevent="register">
-      <label for="name">Name</label>
-      <div>
-        <input id="name" type="text" v-model="name" required autofocus>
+      <h1>Create an account</h1>
+      <div class="input-group">
+        <label for="name">Name</label>
+        <input id="name" type="text" v-model="name" required autofocus placeholder="e.g. John Smith">
+      </div>
+      <div class="input-group">
+        <label for="email">E-Mail address</label>
+        <input id="email" type="email" v-model="email" required placeholder="e.g. johnsmith@example.com">
       </div>
 
-      <label for="email">E-Mail Address</label>
-      <div>
-        <input id="email" type="email" v-model="email" required>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" v-model="password" required placeholder="***********">
       </div>
 
-      <label for="password">Password</label>
-      <div>
-        <input id="password" type="password" v-model="password" required>
+      <div class="input-group">
+        <button class="btn" type="submit">Register</button>
       </div>
-
-      <div>
-        <button type="submit">Register</button>
-      </div>
+      <p>Already have an account?
+        <router-link to="/login">Log in</router-link>
+      </p>
     </form>
   </div>
 </template>
